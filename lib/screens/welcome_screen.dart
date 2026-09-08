@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'trip_details_screen.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -9,18 +10,22 @@ class WelcomeScreen extends StatelessWidget {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
+
           child: Column(
             children: [
+
               const Spacer(),
 
-              // Tripora Logo
+              // Logo
               Container(
                 width: 110,
                 height: 110,
+
                 decoration: BoxDecoration(
                   color: Colors.blue.shade50,
                   shape: BoxShape.circle,
                 ),
+
                 child: Icon(
                   Icons.flight_takeoff_rounded,
                   size: 55,
@@ -33,6 +38,7 @@ class WelcomeScreen extends StatelessWidget {
               // App Name
               const Text(
                 'TRIPORA',
+
                 style: TextStyle(
                   fontSize: 34,
                   fontWeight: FontWeight.bold,
@@ -45,7 +51,9 @@ class WelcomeScreen extends StatelessWidget {
               // Tagline
               Text(
                 'Your AI-Powered Travel Planner',
+
                 textAlign: TextAlign.center,
+
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w500,
@@ -59,7 +67,9 @@ class WelcomeScreen extends StatelessWidget {
               Text(
                 'Plan smarter, discover amazing places, '
                     'and create personalized trips with AI.',
+
                 textAlign: TextAlign.center,
+
                 style: TextStyle(
                   fontSize: 15,
                   height: 1.5,
@@ -73,15 +83,31 @@ class WelcomeScreen extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 height: 56,
+
                 child: ElevatedButton.icon(
+
                   onPressed: () {
-                    // Navigation will be added later.
+
+                    // Open Trip Details page
+                    Navigator.push(
+                      context,
+
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return const TripDetailsScreen();
+                        },
+                      ),
+                    );
+
                   },
+
                   icon: const Icon(
                     Icons.explore_rounded,
                   ),
+
                   label: const Text(
                     'Start Planning',
+
                     style: TextStyle(
                       fontSize: 17,
                       fontWeight: FontWeight.w600,
@@ -95,6 +121,7 @@ class WelcomeScreen extends StatelessWidget {
               // Bottom Text
               Text(
                 'Plan your journey. Make memories.',
+
                 style: TextStyle(
                   fontSize: 13,
                   color: Colors.grey.shade500,

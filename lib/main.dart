@@ -13,13 +13,7 @@ class TriporaApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Tripora',
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.blue,
-        ),
-        fontFamily: 'Roboto',
-      ),
+
       home: const WelcomeScreen(),
     );
   }
