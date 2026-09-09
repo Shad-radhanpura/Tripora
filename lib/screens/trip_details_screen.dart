@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'itinerary_page.dart';
 
 class TripDetailsScreen extends StatefulWidget {
   const TripDetailsScreen({super.key});
@@ -11,12 +12,11 @@ class TripDetailsScreen extends StatefulWidget {
 
 class _TripDetailsScreenState extends State<TripDetailsScreen> {
 
+  // These store the user's choices
+  String destination = '';
   String budget = 'Moderate';
-
   int days = 3;
-
   String interest = 'Nature';
-
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +37,6 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
 
             const Text(
               'Plan Your Trip',
-
               style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
@@ -48,20 +47,14 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
 
             const Text(
               'Enter a few details about your trip.',
-
-              style: TextStyle(
-                fontSize: 16,
-              ),
+              style: TextStyle(fontSize: 16),
             ),
 
             const SizedBox(height: 30),
 
-
             // Destination
-
             const Text(
               'Destination',
-
               style: TextStyle(
                 fontSize: 17,
                 fontWeight: FontWeight.bold,
@@ -71,23 +64,21 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
             const SizedBox(height: 10),
 
             TextField(
+              onChanged: (value) {
+                destination = value;
+              },
 
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: 'Example: Ahmedabad',
-
                 border: OutlineInputBorder(),
               ),
             ),
 
-
             const SizedBox(height: 25),
 
-
             // Budget
-
             const Text(
               'Budget',
-
               style: TextStyle(
                 fontSize: 17,
                 fontWeight: FontWeight.bold,
@@ -97,11 +88,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
             const SizedBox(height: 10),
 
             DropdownButton<String>(
-
               value: budget,
 
               items: const [
-
                 DropdownMenuItem(
                   value: 'Budget',
                   child: Text('Budget'),
@@ -119,23 +108,17 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
               ],
 
               onChanged: (value) {
-
                 setState(() {
                   budget = value!;
                 });
-
               },
             ),
 
-
             const SizedBox(height: 20),
 
-
             // Number of Days
-
             const Text(
               'Number of Days',
-
               style: TextStyle(
                 fontSize: 17,
                 fontWeight: FontWeight.bold,
@@ -146,40 +129,27 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
               children: [
 
                 IconButton(
-
                   onPressed: () {
-
                     if (days > 1) {
-
                       setState(() {
                         days--;
                       });
-
                     }
-
                   },
 
                   icon: const Icon(Icons.remove),
                 ),
 
-
                 Text(
                   '$days Days',
-
-                  style: const TextStyle(
-                    fontSize: 18,
-                  ),
+                  style: const TextStyle(fontSize: 18),
                 ),
 
-
                 IconButton(
-
                   onPressed: () {
-
                     setState(() {
                       days++;
                     });
-
                   },
 
                   icon: const Icon(Icons.add),
@@ -187,15 +157,11 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
               ],
             ),
 
-
             const SizedBox(height: 20),
 
-
             // Interest
-
             const Text(
               'Interest',
-
               style: TextStyle(
                 fontSize: 17,
                 fontWeight: FontWeight.bold,
@@ -205,11 +171,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
             const SizedBox(height: 10),
 
             DropdownButton<String>(
-
               value: interest,
 
               items: const [
-
                 DropdownMenuItem(
                   value: 'Nature',
                   child: Text('Nature'),
@@ -237,42 +201,47 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
               ],
 
               onChanged: (value) {
-
                 setState(() {
                   interest = value!;
                 });
-
               },
             ),
 
-
             const Spacer(),
 
-
-            // Generate Button
-
+            // Generate button
             SizedBox(
               width: double.infinity,
               height: 55,
 
               child: ElevatedButton(
-
                 onPressed: () {
 
-                  // We will add AI here later.
+                  Navigator.push(
+                    context,
+
+                    MaterialPageRoute(
+                      builder: (context) {
+
+                        return ItineraryPage(
+                          destination: destination,
+                          budget: budget,
+                          days: days,
+                          interest: interest,
+                        );
+
+                      },
+                    ),
+                  );
 
                 },
 
                 child: const Text(
                   'Generate My Trip',
-
-                  style: TextStyle(
-                    fontSize: 17,
-                  ),
+                  style: TextStyle(fontSize: 17),
                 ),
               ),
             ),
-
           ],
         ),
       ),
