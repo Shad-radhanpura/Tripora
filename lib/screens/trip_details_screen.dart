@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'itinerary_page.dart';
+import '../services/ai_service.dart';
 
 class TripDetailsScreen extends StatefulWidget {
   const TripDetailsScreen({super.key});
@@ -11,30 +12,81 @@ class TripDetailsScreen extends StatefulWidget {
 }
 
 class _TripDetailsScreenState extends State<TripDetailsScreen> {
-
-  // These store the user's choices
   String destination = '';
   String budget = 'Moderate';
   int days = 3;
   String interest = 'Nature';
 
+  bool _isGenerating = false;
+
+  Future<void> _generateTrip() async {
+    final enteredDestination = destination.trim();
+
+    if (enteredDestination.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter a destination.'),
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      _isGenerating = true;
+    });
+
+    try {
+      final aiItinerary = await AiService.generateItinerary(
+        destination: enteredDestination,
+        budget: budget,
+        days: days,
+        interest: interest,
+      );
+
+      if (!mounted) return;
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) {
+            return ItineraryPage(
+              destination: enteredDestination,
+              budget: budget,
+              days: days,
+              interest: interest,
+              aiItinerary: aiItinerary,
+            );
+          },
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Could not generate trip: $e'),
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isGenerating = false;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-
       appBar: AppBar(
         title: const Text('Trip Details'),
       ),
-
       body: Padding(
         padding: const EdgeInsets.all(20),
-
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-
           children: [
-
             const Text(
               'Plan Your Trip',
               style: TextStyle(
@@ -52,7 +104,6 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
 
             const SizedBox(height: 30),
 
-            // Destination
             const Text(
               'Destination',
               style: TextStyle(
@@ -67,7 +118,6 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
               onChanged: (value) {
                 destination = value;
               },
-
               decoration: const InputDecoration(
                 hintText: 'Example: Ahmedabad',
                 border: OutlineInputBorder(),
@@ -76,7 +126,6 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
 
             const SizedBox(height: 25),
 
-            // Budget
             const Text(
               'Budget',
               style: TextStyle(
@@ -89,24 +138,20 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
 
             DropdownButton<String>(
               value: budget,
-
               items: const [
                 DropdownMenuItem(
                   value: 'Budget',
                   child: Text('Budget'),
                 ),
-
                 DropdownMenuItem(
                   value: 'Moderate',
                   child: Text('Moderate'),
                 ),
-
                 DropdownMenuItem(
                   value: 'Luxury',
                   child: Text('Luxury'),
                 ),
               ],
-
               onChanged: (value) {
                 setState(() {
                   budget = value!;
@@ -116,7 +161,6 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
 
             const SizedBox(height: 20),
 
-            // Number of Days
             const Text(
               'Number of Days',
               style: TextStyle(
@@ -127,7 +171,6 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
 
             Row(
               children: [
-
                 IconButton(
                   onPressed: () {
                     if (days > 1) {
@@ -136,7 +179,6 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
                       });
                     }
                   },
-
                   icon: const Icon(Icons.remove),
                 ),
 
@@ -151,7 +193,6 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
                       days++;
                     });
                   },
-
                   icon: const Icon(Icons.add),
                 ),
               ],
@@ -159,7 +200,6 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
 
             const SizedBox(height: 20),
 
-            // Interest
             const Text(
               'Interest',
               style: TextStyle(
@@ -172,34 +212,28 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
 
             DropdownButton<String>(
               value: interest,
-
               items: const [
                 DropdownMenuItem(
                   value: 'Nature',
                   child: Text('Nature'),
                 ),
-
                 DropdownMenuItem(
                   value: 'Adventure',
                   child: Text('Adventure'),
                 ),
-
                 DropdownMenuItem(
                   value: 'Culture',
                   child: Text('Culture'),
                 ),
-
                 DropdownMenuItem(
                   value: 'Beach',
                   child: Text('Beach'),
                 ),
-
                 DropdownMenuItem(
                   value: 'Shopping',
                   child: Text('Shopping'),
                 ),
               ],
-
               onChanged: (value) {
                 setState(() {
                   interest = value!;
@@ -209,34 +243,20 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
 
             const Spacer(),
 
-            // Generate button
             SizedBox(
               width: double.infinity,
               height: 55,
-
               child: ElevatedButton(
-                onPressed: () {
-
-                  Navigator.push(
-                    context,
-
-                    MaterialPageRoute(
-                      builder: (context) {
-
-                        return ItineraryPage(
-                          destination: destination,
-                          budget: budget,
-                          days: days,
-                          interest: interest,
-                        );
-
-                      },
-                    ),
-                  );
-
-                },
-
-                child: const Text(
+                onPressed: _isGenerating ? null : _generateTrip,
+                child: _isGenerating
+                    ? const SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                  ),
+                )
+                    : const Text(
                   'Generate My Trip',
                   style: TextStyle(fontSize: 17),
                 ),

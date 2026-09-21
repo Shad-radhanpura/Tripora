@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'screens/welcome_screen.dart';
+import 'services/login_page.dart';
 
 void main() {
   runApp(const TriporaApp());
@@ -14,7 +14,7 @@ class TriporaApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Tripora',
 
-      home: const WelcomeScreen(),
+      home: LoginPage(),
     );
   }
 }
