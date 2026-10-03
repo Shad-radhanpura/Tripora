@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:http/http.dart' as http;
 
 class AiService {
@@ -70,7 +71,7 @@ Important rules:
         {
           'role': 'user',
           'content': prompt,
-        }
+        },
       ],
     });
 
@@ -87,7 +88,9 @@ Important rules:
           },
           body: requestBody,
         )
-            .timeout(const Duration(seconds: 60));
+            .timeout(
+          const Duration(seconds: 60),
+        );
 
         if (response.statusCode == 200) {
           final data = jsonDecode(response.body);
@@ -95,7 +98,8 @@ Important rules:
           final content =
           data['choices']?[0]?['message']?['content'];
 
-          if (content != null && content.toString().trim().isNotEmpty) {
+          if (content != null &&
+              content.toString().trim().isNotEmpty) {
             return content.toString();
           }
 
@@ -104,13 +108,13 @@ Important rules:
           );
         }
 
-        // Retry temporary server/rate-limit errors.
         if ((response.statusCode == 429 ||
             response.statusCode >= 500) &&
             attempt < 3) {
           await Future.delayed(
             Duration(seconds: attempt * 2),
           );
+
           continue;
         }
 
@@ -123,6 +127,7 @@ Important rules:
           await Future.delayed(
             Duration(seconds: attempt * 2),
           );
+
           continue;
         }
 

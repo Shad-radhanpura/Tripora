@@ -2,31 +2,35 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../screens/welcome_screen.dart';
-import 'signup_page.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class SignupPage extends StatefulWidget {
+  const SignupPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<SignupPage> createState() => _SignupPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _SignupPageState extends State<SignupPage> {
   static const Color primary = Color(0xFF2563EB);
   static const Color secondary = Color(0xFF4F46E5);
   static const Color dark = Color(0xFF172033);
   static const Color muted = Color(0xFF667085);
 
+  final nameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final confirmController = TextEditingController();
 
   bool obscurePassword = true;
+  bool obscureConfirm = true;
   bool isLoading = false;
 
   @override
   void dispose() {
+    nameController.dispose();
     emailController.dispose();
     passwordController.dispose();
+    confirmController.dispose();
     super.dispose();
   }
 
@@ -40,8 +44,8 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             children: [
               _buildHero(),
-              _buildLoginCard(),
-              const SizedBox(height: 28),
+              _buildForm(),
+              const SizedBox(height: 25),
             ],
           ),
         ),
@@ -51,12 +55,12 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _buildHero() {
     return SizedBox(
-      height: 300,
+      height: 265,
       child: Stack(
         fit: StackFit.expand,
         children: [
           Image.network(
-            'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee',
+            'https://images.unsplash.com/photo-1488646953014-85cb44e25828',
             fit: BoxFit.cover,
             errorBuilder: (_, __, ___) {
               return const DecoratedBox(
@@ -77,77 +81,52 @@ class _LoginPageState extends State<LoginPage> {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  primary.withValues(alpha: 0.15),
-                  secondary.withValues(alpha: 0.88),
+                  primary.withValues(alpha: 0.20),
+                  secondary.withValues(alpha: 0.92),
                 ],
               ),
             ),
           ),
           Positioned(
-            top: 25,
-            left: 22,
-            child: Row(
-              children: [
-                Container(
-                  width: 45,
-                  height: 45,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.94),
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: const Icon(
-                    Icons.flight_takeoff_rounded,
-                    color: primary,
-                    size: 24,
-                  ),
+            top: 18,
+            left: 18,
+            child: GestureDetector(
+              onTap: () => Navigator.pop(context),
+              child: Container(
+                width: 43,
+                height: 43,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.92),
+                  shape: BoxShape.circle,
                 ),
-                const SizedBox(width: 11),
-                const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'TRIPORA',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 19,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 1.2,
-                      ),
-                    ),
-                    Text(
-                      'AI Travel Planner',
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: 10,
-                      ),
-                    ),
-                  ],
+                child: const Icon(
+                  Icons.arrow_back_rounded,
+                  color: dark,
+                  size: 21,
                 ),
-              ],
+              ),
             ),
           ),
           const Positioned(
             left: 22,
-            right: 22,
-            bottom: 28,
+            bottom: 25,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Your next adventure\nstarts here. 🌍',
+                  'Join TRIPORA 🌍',
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 31,
-                    height: 1.05,
+                    fontSize: 30,
                     fontWeight: FontWeight.w900,
                   ),
                 ),
-                SizedBox(height: 9),
+                SizedBox(height: 7),
                 Text(
-                  'Plan smarter. Explore more. Travel better.',
+                  'Your personalized travel journey starts here.',
                   style: TextStyle(
                     color: Colors.white70,
-                    fontSize: 12,
+                    fontSize: 11,
                   ),
                 ),
               ],
@@ -158,11 +137,13 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget _buildLoginCard() {
+  Widget _buildForm() {
     return Transform.translate(
       offset: const Offset(0, -18),
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16),
+        margin: const EdgeInsets.symmetric(
+          horizontal: 16,
+        ),
         padding: const EdgeInsets.all(21),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -179,22 +160,39 @@ class _LoginPageState extends State<LoginPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Welcome back 👋',
+              'Start your journey ✨',
               style: TextStyle(
                 color: dark,
-                fontSize: 24,
+                fontSize: 23,
                 fontWeight: FontWeight.w900,
               ),
             ),
             const SizedBox(height: 5),
             const Text(
-              'Continue planning your next journey.',
+              'Create your Tripora account.',
               style: TextStyle(
                 color: muted,
                 fontSize: 12,
               ),
             ),
-            const SizedBox(height: 22),
+            const SizedBox(height: 21),
+
+            _label('Full name'),
+            const SizedBox(height: 7),
+
+            TextField(
+              controller: nameController,
+              textInputAction: TextInputAction.next,
+              decoration: const InputDecoration(
+                hintText: 'Your name',
+                prefixIcon: Icon(
+                  Icons.person_outline_rounded,
+                  color: primary,
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 14),
 
             _label('Email address'),
             const SizedBox(height: 7),
@@ -212,7 +210,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
 
-            const SizedBox(height: 15),
+            const SizedBox(height: 14),
 
             _label('Password'),
             const SizedBox(height: 7),
@@ -220,10 +218,9 @@ class _LoginPageState extends State<LoginPage> {
             TextField(
               controller: passwordController,
               obscureText: obscurePassword,
-              textInputAction: TextInputAction.done,
-              onSubmitted: (_) => _login(),
+              textInputAction: TextInputAction.next,
               decoration: InputDecoration(
-                hintText: 'Enter your password',
+                hintText: 'Create a password',
                 prefixIcon: const Icon(
                   Icons.lock_outline_rounded,
                   color: primary,
@@ -244,13 +241,45 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
 
+            const SizedBox(height: 14),
+
+            _label('Confirm password'),
+            const SizedBox(height: 7),
+
+            TextField(
+              controller: confirmController,
+              obscureText: obscureConfirm,
+              textInputAction: TextInputAction.done,
+              onSubmitted: (_) => _createAccount(),
+              decoration: InputDecoration(
+                hintText: 'Enter password again',
+                prefixIcon: const Icon(
+                  Icons.lock_reset_rounded,
+                  color: primary,
+                ),
+                suffixIcon: IconButton(
+                  onPressed: () {
+                    setState(() {
+                      obscureConfirm = !obscureConfirm;
+                    });
+                  },
+                  icon: Icon(
+                    obscureConfirm
+                        ? Icons.visibility_outlined
+                        : Icons.visibility_off_outlined,
+                    color: muted,
+                  ),
+                ),
+              ),
+            ),
+
             const SizedBox(height: 22),
 
             SizedBox(
               width: double.infinity,
               height: 56,
               child: ElevatedButton(
-                onPressed: isLoading ? null : _login,
+                onPressed: isLoading ? null : _createAccount,
                 child: isLoading
                     ? const SizedBox(
                   width: 23,
@@ -264,16 +293,16 @@ class _LoginPageState extends State<LoginPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Login to Tripora',
+                      'Create My Account',
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w900,
                       ),
                     ),
                     SizedBox(width: 9),
-                    Icon(
-                      Icons.arrow_forward_rounded,
-                      size: 20,
+                    Text(
+                      '✨',
+                      style: TextStyle(fontSize: 17),
                     ),
                   ],
                 ),
@@ -282,45 +311,12 @@ class _LoginPageState extends State<LoginPage> {
 
             const SizedBox(height: 18),
 
-            Row(
-              children: [
-                Expanded(
-                  child: Divider(
-                    color: Colors.grey.shade200,
-                  ),
-                ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
-                  child: Text(
-                    'OR',
-                    style: TextStyle(
-                      color: muted,
-                      fontSize: 9,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Divider(
-                    color: Colors.grey.shade200,
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 17),
-
             Center(
               child: GestureDetector(
                 onTap: isLoading
                     ? null
                     : () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const SignupPage(),
-                    ),
-                  );
+                  Navigator.pop(context);
                 },
                 child: RichText(
                   text: const TextSpan(
@@ -329,14 +325,14 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     children: [
                       TextSpan(
-                        text: "Don't have an account? ",
+                        text: 'Already have an account? ',
                         style: TextStyle(
                           color: muted,
                           fontSize: 12,
                         ),
                       ),
                       TextSpan(
-                        text: 'Create account',
+                        text: 'Login',
                         style: TextStyle(
                           color: primary,
                           fontSize: 12,
@@ -349,7 +345,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
 
-            const SizedBox(height: 17),
+            const SizedBox(height: 16),
 
             Container(
               padding: const EdgeInsets.all(11),
@@ -360,14 +356,14 @@ class _LoginPageState extends State<LoginPage> {
               child: const Row(
                 children: [
                   Icon(
-                    Icons.verified_user_outlined,
+                    Icons.shield_outlined,
                     color: Color(0xFF16803A),
                     size: 18,
                   ),
                   SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'Your travel planning stays simple and secure.',
+                      'Your account is protected by Firebase Authentication.',
                       style: TextStyle(
                         color: muted,
                         fontSize: 9,
@@ -395,16 +391,28 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   // ------------------------------------------------------------
-  // FIREBASE LOGIN
+  // FIREBASE SIGNUP
   // ------------------------------------------------------------
 
-  Future<void> _login() async {
+  Future<void> _createAccount() async {
+    final name = nameController.text.trim();
     final email = emailController.text.trim();
     final password = passwordController.text;
+    final confirm = confirmController.text;
 
-    if (email.isEmpty || password.isEmpty) {
+    if (name.isEmpty ||
+        email.isEmpty ||
+        password.isEmpty ||
+        confirm.isEmpty) {
       _showMessage(
-        'Please enter your email and password.',
+        'Please complete all fields.',
+      );
+      return;
+    }
+
+    if (name.length < 2) {
+      _showMessage(
+        'Please enter your full name.',
       );
       return;
     }
@@ -423,20 +431,32 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
 
+    if (password != confirm) {
+      _showMessage(
+        'Passwords do not match.',
+      );
+      return;
+    }
+
     setState(() {
       isLoading = true;
     });
 
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
+      // Create the Firebase Authentication account.
+      final UserCredential userCredential =
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
 
+      // Save the user's name in their Firebase Auth profile.
+      await userCredential.user?.updateDisplayName(name);
+
       if (!mounted) return;
 
       _showMessage(
-        'Login successful! Welcome to Tripora.',
+        'Account created successfully! Welcome to Tripora.',
       );
 
       await Future.delayed(
@@ -445,11 +465,13 @@ class _LoginPageState extends State<LoginPage> {
 
       if (!mounted) return;
 
-      Navigator.pushReplacement(
+      // Firebase has already signed the new user in.
+      Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
           builder: (_) => const WelcomeScreen(),
         ),
+            (route) => false,
       );
     } on FirebaseAuthException catch (e) {
       if (!mounted) return;
@@ -457,9 +479,9 @@ class _LoginPageState extends State<LoginPage> {
       String message;
 
       switch (e.code) {
-        case 'invalid-credential':
+        case 'email-already-in-use':
           message =
-          'Incorrect email or password. Please try again.';
+          'An account already exists with this email.';
           break;
 
         case 'invalid-email':
@@ -467,24 +489,19 @@ class _LoginPageState extends State<LoginPage> {
           'Please enter a valid email address.';
           break;
 
-        case 'user-disabled':
+        case 'weak-password':
           message =
-          'This account has been disabled.';
+          'Password is too weak. Use at least 6 characters.';
           break;
 
-        case 'user-not-found':
+        case 'operation-not-allowed':
           message =
-          'No account found with this email.';
-          break;
-
-        case 'wrong-password':
-          message =
-          'Incorrect password. Please try again.';
+          'Email/password authentication is not enabled in Firebase.';
           break;
 
         case 'too-many-requests':
           message =
-          'Too many login attempts. Please try again later.';
+          'Too many attempts. Please try again later.';
           break;
 
         case 'network-request-failed':
@@ -494,7 +511,7 @@ class _LoginPageState extends State<LoginPage> {
 
         default:
           message =
-          'Login failed. Please try again.';
+          'Account creation failed. Please try again.';
       }
 
       _showMessage(message);
